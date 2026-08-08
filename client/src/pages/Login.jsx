@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
+import { AuthContext } from '../context/AuthContent'
 
 function Login() {
   const navigate = useNavigate()
+  const { login } = useContext(AuthContext)
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -19,10 +21,10 @@ function Login() {
     e.preventDefault()
     setLoading(true)
     setError('')
+    
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', formData)
-      localStorage.setItem('token', res.data.token)
-      localStorage.setItem('user', JSON.stringify(res.data.user))
+      login(res.data.user, res.data.token)
       navigate('/dashboard')
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong')
