@@ -3,30 +3,35 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
 // @route POST /api/auth/register
 router.post('/register', async (req, res) => {
-  const { fullName, email, password, role, phone } = req.body;
+  const { fullName, email, password, role, phone, dateOfBirth } = req.body;
 
   try {
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Email already registered' });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Create user with pending status
     const user = await User.create({
       fullName,
       email,
       passwordHash,
       role: role || 'student',
       phone,
+      dateOfBirth,
       isApproved: false,
+    });
+
+    await Notification.create({
+      type: 'new_registration',
+      message: `New student registered: ${fullName}`,
+      relatedUser: user._id,
     });
 
     res.status(201).json({
@@ -44,24 +49,20 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Find user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    // Check if approved
     if (!user.isApproved) {
       return res.status(403).json({ message: 'Your account is pending admin approval.' });
     }
 
-    // Check password
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    // Generate JWT
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
