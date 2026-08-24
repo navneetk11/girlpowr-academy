@@ -7,7 +7,14 @@ router.get('/', async (req, res) => {
   try {
     const { city } = req.query;
     const filter = { isActive: true };
-    if (city) filter.cities = city;
+    if (city) {
+      // Include programs matching the city, plus programs with no city restriction
+      // (Girl Pow-R: audition-only, available everywhere; Online: no physical city)
+      filter.$or = [
+        { cities: city },
+        { cities: { $size: 0 } },
+      ];
+    }
 
     const programs = await Program.find(filter);
     res.json(programs);

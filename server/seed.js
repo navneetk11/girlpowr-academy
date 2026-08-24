@@ -21,14 +21,15 @@ const programs = [
     name: 'Online Program',
     programType: 'Online',
     description: 'Remote dance training accessible anywhere',
-    cities: ['Online'],
+    cities: [],
+    isOnline: true,
     requiresAudition: false,
   },
   {
     name: 'Girl Pow-R',
     programType: 'GirlPowR',
     description: 'Elite audition-only performance program',
-    cities: ['London ON', 'Ajax ON', 'Etobicoke ON'],
+    cities: [],
     requiresAudition: true,
   },
 ];
