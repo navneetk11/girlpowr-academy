@@ -4,11 +4,15 @@ import { useNavigate, Link } from 'react-router-dom'
 
 function Register() {
   const navigate = useNavigate()
+  const params = new URLSearchParams(window.location.search)
+
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
+    fullName: params.get('name') || '',
+    email: params.get('email') || '',
     password: '',
-    phone: '',
+    phone: params.get('phone') || '',
+    city: params.get('city') || '',
+    dateOfBirth: '',
     role: 'student'
   })
   const [error, setError] = useState('')
@@ -24,7 +28,7 @@ function Register() {
     setError('')
     try {
       await axios.post('http://localhost:5000/api/auth/register', formData)
-      navigate('/pending')
+      navigate('/thank-you')
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong')
     } finally {
@@ -76,6 +80,15 @@ function Register() {
             value={formData.phone}
             onChange={handleChange}
           />
+          <label style={styles.label}>Date of birth</label>
+          <input
+            style={styles.input}
+            type='date'
+            name='dateOfBirth'
+            value={formData.dateOfBirth}
+            onChange={handleChange}
+            required
+          />
           <select
             style={styles.input}
             name='role'
@@ -126,6 +139,12 @@ const styles = {
     fontWeight: 'normal',
     marginBottom: '1.5rem',
     fontSize: '1rem',
+  },
+  label: {
+    display: 'block',
+    fontSize: '13px',
+    color: '#555',
+    marginBottom: '0.25rem',
   },
   input: {
     width: '100%',

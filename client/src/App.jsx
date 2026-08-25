@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContent'
 import Register from './pages/Register'
 import Login from './pages/Login'
-import PendingApproval from './pages/PendingApproval'
+import ThankYou from './pages/ThankYou'
 import Dashboard from './pages/Dashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -13,7 +13,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/pending' element={<PendingApproval />} />
+          <Route path='/thank-you' element={<ThankYou />} />
           <Route
             path='/dashboard'
             element={

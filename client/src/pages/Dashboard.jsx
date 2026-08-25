@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContent'
 
 function Dashboard() {
-  const { user, token, logout } = useContext(AuthContext)
+  const { user, token, studentId, logout } = useContext(AuthContext)
   const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
   const [error, setError] = useState('')
@@ -12,7 +12,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/students/${user.id}`, {
+        const res = await axios.get(`http://localhost:5000/api/students/${studentId}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         setProfile(res.data)
@@ -20,8 +20,8 @@ function Dashboard() {
         setError('Could not load profile')
       }
     }
-    if (user?.id) fetchProfile()
-  }, [user, token])
+    if (studentId) fetchProfile()
+  }, [studentId, token])
 
   const handleLogout = () => {
     logout()
@@ -34,8 +34,8 @@ function Dashboard() {
   return (
     <div style={{ padding: '2rem' }}>
       <h2>Welcome, {profile.fullName} 🎉</h2>
-      <p>Role: {profile.role}</p>
-      <p>Email: {profile.email}</p>
+      <p>Level: {profile.level}</p>
+      <p>Audition Status: {profile.auditionStatus}</p>
       <button onClick={handleLogout}>Logout</button>
     </div>
   )
