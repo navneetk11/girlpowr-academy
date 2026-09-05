@@ -12,6 +12,7 @@ function Register() {
     password: '',
     phone: params.get('phone') || '',
     city: params.get('city') || '',
+    program: params.get('program') || '',
     dateOfBirth: '',
     role: 'student'
   })
@@ -80,6 +81,12 @@ function Register() {
             value={formData.phone}
             onChange={handleChange}
           />
+          {formData.city && (
+            <input style={styles.input} type='text' name='city' value={formData.city} readOnly />
+          )}
+          {formData.program && (
+            <input style={styles.input} type='text' name='program' value={formData.program} readOnly />
+          )}
           <label style={styles.label}>Date of birth</label>
           <input
             style={styles.input}

@@ -28,6 +28,11 @@ function Login() {
 
       login(user, token, studentId)
 
+      if (user.role === 'admin') {
+        navigate('/admin')
+        return
+      }
+
       // Check if contracts are signed before deciding redirect
       try {
         const contractsRes = await axios.get(

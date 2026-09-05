@@ -1,6 +1,8 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const Program = require('./models/Program');
+const User = require('./models/User');
 
 const programs = [
   {
@@ -41,8 +43,24 @@ const seedDB = async () => {
 
     await Program.deleteMany({});
     await Program.insertMany(programs);
-
     console.log('4 programs seeded successfully');
+
+    const adminEmail = 'admin@girlpowr.com';
+    const existingAdmin = await User.findOne({ email: adminEmail });
+    if (!existingAdmin) {
+      const passwordHash = await bcrypt.hash('Admin123!', await bcrypt.genSalt(10));
+      await User.create({
+        fullName: 'Dawn (Admin)',
+        email: adminEmail,
+        passwordHash,
+        role: 'admin',
+        isApproved: true,
+      });
+      console.log(`Admin account created: ${adminEmail} / Admin123!`);
+    } else {
+      console.log('Admin account already exists, skipping');
+    }
+
     process.exit(0);
   } catch (err) {
     console.error('Seed error:', err);
