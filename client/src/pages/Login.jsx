@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
+import { AuthContext } from '../context/AuthContent'
 
 function Login() {
   const navigate = useNavigate()
+  const { login } = useContext(AuthContext)
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -19,13 +21,35 @@ function Login() {
     e.preventDefault()
     setLoading(true)
     setError('')
+
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', formData)
-      localStorage.setItem('token', res.data.token)
-      localStorage.setItem('user', JSON.stringify(res.data.user))
-      navigate('/dashboard')
+      const { token, user, studentId } = res.data
+
+      login(user, token, studentId)
+
+      // Check if contracts are signed before deciding redirect
+      try {
+        const contractsRes = await axios.get(
+          `http://localhost:5000/api/contracts/${studentId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+        if (contractsRes.data.allSigned) {
+          navigate('/dashboard')
+        } else {
+          navigate('/contracts')
+        }
+      } catch (contractsErr) {
+        // Contracts API not available yet or student has no contract record — default to contracts page
+        navigate('/contracts')
+      }
+
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong')
+      if (err.response?.status === 403) {
+        setError("Your account is pending Dawn's approval")
+      } else {
+        setError(err.response?.data?.message || 'Something went wrong')
+      }
     } finally {
       setLoading(false)
     }
