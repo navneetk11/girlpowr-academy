@@ -34,6 +34,8 @@ function Dashboard() {
   return (
     <div style={{ padding: '2rem' }}>
       <h2>Welcome, {profile.fullName} 🎉</h2>
+      {profile.program && <p>Program: {profile.program}</p>}
+      {profile.city && <p>City: {profile.city}</p>}
       <p>Level: {profile.level}</p>
       <p>Audition Status: {profile.auditionStatus}</p>
       <button onClick={handleLogout}>Logout</button>

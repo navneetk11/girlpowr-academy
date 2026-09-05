@@ -8,6 +8,8 @@ const studentSchema = new mongoose.Schema({
   level:         { type: String, default: 'Beginner' },
   auditionStatus:{ type: String, enum: ['not_applicable', 'pending', 'accepted', 'rejected'], default: 'not_applicable' },
   photo:         { type: String, default: '' },
+  program:       { type: String, default: '' },
+  city:          { type: String, default: '' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Student', studentSchema);

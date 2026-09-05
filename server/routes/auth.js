@@ -8,7 +8,7 @@ const Notification = require('../models/Notification');
 
 // @route POST /api/auth/register
 router.post('/register', async (req, res) => {
-  const { fullName, email, password, role, phone, dateOfBirth } = req.body;
+  const { fullName, email, password, role, phone, dateOfBirth, program, city } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -35,6 +35,8 @@ router.post('/register', async (req, res) => {
         fullName: user.fullName,
         dateOfBirth: user.dateOfBirth,
         userId: user._id,
+        program: program || '',
+        city: city || '',
       });
     }
 
