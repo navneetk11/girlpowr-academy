@@ -16,7 +16,10 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/programs', require('./routes/programs'));
 app.use('/api/enrollments', require('./routes/enrollments'));
+app.use('/api/students', require('./routes/students'));
 app.use('/api/admin', require('./routes/adminNotifications'));
+app.use('/api/admin', require('./routes/admin'));
+app.use('/api/contracts', require('./routes/contracts'));
 
 // Test route
 app.get('/', (req, res) => {

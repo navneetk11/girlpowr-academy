@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Student = require('../models/Student');
 const Notification = require('../models/Notification');
 
 // @route POST /api/auth/register
@@ -27,6 +28,15 @@ router.post('/register', async (req, res) => {
       dateOfBirth,
       isApproved: false,
     });
+
+    // Create linked Student profile if role is student
+    if (user.role === 'student') {
+      await Student.create({
+        fullName: user.fullName,
+        dateOfBirth: user.dateOfBirth,
+        userId: user._id,
+      });
+    }
 
     await Notification.create({
       type: 'new_registration',
@@ -69,6 +79,9 @@ router.post('/login', async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    // Find the linked Student profile
+    const student = await Student.findOne({ userId: user._id });
+
     res.json({
       token,
       user: {
@@ -76,7 +89,8 @@ router.post('/login', async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-      }
+      },
+      studentId: student ? student._id : null,
     });
 
   } catch (error) {
